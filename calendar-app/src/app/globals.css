@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  --accent: #1B8FD2;
+  --accent-light: #5BB8F5;
+  --accent-dark: #0F5F8A;
+  --paper: #FAFAF8;
+  --ink: #1A1A2E;
+  --ink-light: #6B7280;
+  --border: #E5E5E0;
+
+  --calendar-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.10);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #EDECEA;
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Spiral binding dots */
+.spiral-binding {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 0;
+  background: transparent;
+}
+
+.spiral-dot {
+  width: 18px;
+  height: 22px;
+  border: 2.5px solid #888;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: linear-gradient(135deg, #ccc 0%, #888 50%, #aaa 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 2px rgba(255,255,255,0.3);
+  position: relative;
+}
+
+.spiral-dot::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  width: 5px;
+  height: 4px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+}
+
+/* Calendar grid day cells */
+.day-cell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 50%;
+  transition: all 0.18s ease;
+  z-index: 1;
+  user-select: none;
+}
+
+.day-cell:hover:not(.day-empty):not(.day-other-month) {
+  background: rgba(27, 143, 210, 0.12);
+  color: var(--accent-dark);
+}
+
+.day-cell.day-today {
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.day-cell.day-today::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+}
+
+.day-cell.day-start,
+.day-cell.day-end {
+  background: var(--accent) !important;
+  color: white !important;
+  font-weight: 700;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.day-cell.day-in-range {
+  background: rgba(27, 143, 210, 0.15);
+  border-radius: 0;
+  color: var(--accent-dark);
+}
+
+.day-cell.day-start.day-in-range-start {
+  border-radius: 50% 0 0 50%;
+}
+
+.day-cell.day-end.day-in-range-end {
+  border-radius: 0 50% 50% 0;
+}
+
+/* Range background spans full width */
+.day-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-wrapper.in-range::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(27, 143, 210, 0.12);
+  z-index: 0;
+}
+
+.day-wrapper.range-start::before {
+  left: 50%;
+  border-radius: 0;
+}
+
+.day-wrapper.range-end::before {
+  right: 50%;
+  border-radius: 0;
+}
+
+/* Notes area */
+.notes-line {
+  border-bottom: 1px solid #D1D5DB;
+  min-height: 24px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.notes-line:focus-within {
+  border-color: var(--accent);
+}
+
+/* Page flip animation */
+.flip-enter {
+  animation: flipIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.flip-exit {
+  animation: flipOut 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes flipIn {
+  from {
+    opacity: 0;
+    transform: rotateX(15deg) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0);
+  }
+}
+
+@keyframes flipOut {
+  from {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: rotateX(-15deg) translateY(8px);
+  }
+}
+
+/* Theme transitions */
+.theme-light {
+  --bg: #EDECEA;
+  --calendar-bg: #FAFAF8;
+  --text: #1A1A2E;
+  --subtext: #6B7280;
+  --border-color: #E5E5E0;
+}
+
+.theme-dark {
+  --bg: #111318;
+  --calendar-bg: #1E2028;
+  --text: #F0EEE8;
+  --subtext: #9CA3AF;
+  --border-color: #2E3038;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .day-cell {
+    font-size: 0.72rem;
+  }
+}
+
+/* Holiday badge */
+.holiday-dot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #E85C3A;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 99px;
+}
